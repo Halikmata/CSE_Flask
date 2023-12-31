@@ -24,7 +24,7 @@ def data_fetch(query):
 @app.route("/")
 def home():
     if session.get("username"):
-        return redirect(url_for("get_player"))
+        return redirect(url_for("get_church"))
     return render_template("base.html")
 
 @app.route("/login", methods=["POST"])
@@ -34,7 +34,7 @@ def login():
 
     if username in users and users[username] == password:
         session['username'] = username
-        return redirect(url_for('get_player'))
+        return redirect(url_for('get_church'))
 
     return render_template("base.html", message="Invalid credentials")
 
@@ -43,37 +43,32 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('home'))
 
-@app.route("/player", methods=["GET"])
-def get_player():
-    data = data_fetch("""select * from player""")
+@app.route("/church", methods=["GET"])
+def get_church():
+    data = data_fetch("""select * from church""")
     return make_response(jsonify(data), 200)
 
 
-@app.route("/player/<int:id>", methods=["GET"])
+@app.route("/church/<int:id>", methods=["GET"])
 def get_player_by_id(id):
-    data = data_fetch("""SELECT * FROM player where player_id = {}""".format(id))
+    data = data_fetch("""SELECT * FROM church where player_id = {}""".format(id))
     return make_response(jsonify(data), 200)
 
 
-@app.route("/player", methods=["POST"])
-def add_player():
+@app.route("/church", methods=["POST"])
+def add_church():
     cur = mysql.connection.cursor()
     info = request.get_json()
-    first_name = info["first_name"]
-    last_name = info["last_name"]
-    gender = info["gender"]
-    address = info["address"]
-    other_details = info["other_details"]
-    current_game = info["current_game"]
-    current_team = info["current_team"]
+    conference_id = info["conference_id"]
+    details = info["details"]
 
     cur.execute(
         """
-        INSERT INTO player 
-        (first_name, last_name, gender, address, other_details, current_game, current_team) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO church 
+        (conference_id, details) 
+        VALUES (%s, %s)
         """,
-        (first_name, last_name, gender, address, other_details, current_game, current_team),
+        (conference_id, details),
     )
     mysql.connection.commit()
     print("row(s) affected: {}".format(cur.rowcount))
@@ -82,32 +77,26 @@ def add_player():
 
     return make_response(
         jsonify(
-            {"message": "player added successfully", "rows_affected": rows_affected}
+            {"message": "church added successfully", "rows_affected": rows_affected}
         ),
         201,
     )
 
 
-@app.route("/player/<int:id>", methods=["PUT"])
+@app.route("/church/<int:id>", methods=["PUT"])
 def update_player(id):
     cur = mysql.connection.cursor()
     info = request.get_json()
-    first_name = info["first_name"]
-    last_name = info["last_name"]
-    gender = info["gender"]
-    address = info["address"]
-    other_details = info["other_details"]
-    current_game = info["current_game"]
-    current_team = info["current_team"]
+    conference_id = info["conference_id"]
+    details = info["details"]
 
     cur.execute(
         """
         UPDATE player 
-        SET first_name = %s, last_name = %s, gender = %s, address = %s, other_details = %s, 
-        current_game = %s, current_team = %s 
-        WHERE player_id = %s
+        SET conference_id = %s, details = %s
+        WHERE id = %s
         """,
-        (first_name, last_name, gender, address, other_details, current_game, current_team, id),
+        (conference_id, details, id),
     )
     mysql.connection.commit()
     rows_affected = cur.rowcount
@@ -115,24 +104,24 @@ def update_player(id):
 
     return make_response(
         jsonify(
-            {"message": "player updated successfully", "rows_affected": rows_affected}
+            {"message": "church updated successfully", "rows_affected": rows_affected}
         ),
         200,
     )
 
 
 
-@app.route("/player/<int:id>", methods=["DELETE"])
+@app.route("/church/<int:id>", methods=["DELETE"])
 def delete_actor(id):
     cur = mysql.connection.cursor()
-    cur.execute(""" DELETE FROM player WHERE player_id = %s """, (id,))
+    cur.execute(""" DELETE FROM church WHERE id = %s """, (id,))
     mysql.connection.commit()
     rows_affected = cur.rowcount
     cur.close()
 
     return make_response(
         jsonify(
-            {"message": "player deleted successfully", "rows_affected": rows_affected}
+            {"message": "church deleted successfully", "rows_affected": rows_affected}
         ),
         200,
     )
