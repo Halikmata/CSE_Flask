@@ -25,7 +25,7 @@ def data_fetch(query):
 def home():
     if session.get("username"):
         return redirect(url_for("get_church"))
-    return render_template("base.html")
+    return render_template("login.html")
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -50,8 +50,8 @@ def get_church():
 
 
 @app.route("/church/<int:id>", methods=["GET"])
-def get_player_by_id(id):
-    data = data_fetch("""SELECT * FROM church where player_id = {}""".format(id))
+def get_church_by_id(id):
+    data = data_fetch("""SELECT * FROM church where id = {}""".format(id))
     return make_response(jsonify(data), 200)
 
 
