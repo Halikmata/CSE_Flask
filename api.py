@@ -12,7 +12,7 @@ app.config["SECRET_KEY"] = "29900eb78c15dad2e9d691e4041160d1"
 
 mysql = MySQL(app)
 
-users = {'admin': 'admin12345'}
+users = {'localhost': 'root'}
 #try
 def data_fetch(query):
     cur = mysql.connection.cursor()
@@ -84,7 +84,7 @@ def add_church():
 
 
 @app.route("/church/<int:id>", methods=["PUT"])
-def update_player(id):
+def update_church(id):
     cur = mysql.connection.cursor()
     info = request.get_json()
     conference_id = info["conference_id"]
@@ -92,7 +92,7 @@ def update_player(id):
 
     cur.execute(
         """
-        UPDATE player 
+        UPDATE church 
         SET conference_id = %s, details = %s
         WHERE id = %s
         """,
@@ -112,7 +112,7 @@ def update_player(id):
 
 
 @app.route("/church/<int:id>", methods=["DELETE"])
-def delete_actor(id):
+def delete_church(id):
     cur = mysql.connection.cursor()
     cur.execute(""" DELETE FROM church WHERE id = %s """, (id,))
     mysql.connection.commit()
