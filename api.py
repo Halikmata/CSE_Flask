@@ -1,5 +1,6 @@
-from flask import Flask, make_response, jsonify, request, render_template, redirect, url_for, session
+from flask import Flask, make_response, jsonify, request, render_template, redirect, url_for, session, Response
 from flask_mysqldb import MySQL
+import dicttoxml
 
 app = Flask(__name__)
 
@@ -14,12 +15,35 @@ mysql = MySQL(app)
 
 users = {'localhost': 'root'}
 #try
+
+def xml_form(get_data):
+    data = dicttoxml.dicttoxml(get_data)
+    return Response(data, mimetype='text/xml')
+
 def data_fetch(query):
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-    data = cur.fetchall()
-    cur.close()
-    return data
+    # cur = mysql.connection.cursor()
+    # cur.execute(query)
+    # data = cur.fetchall()
+    # cur.close()
+    # return data
+
+    try:
+        format_requested = request.args.get('format') 
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        
+        data = cur.fetchall()
+        
+        if format_requested and format_requested.lower() == 'xml':
+            xml_data = xml_form(data)
+            return xml_data
+        else:
+            return data
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
 
 @app.route("/")
 def home():
