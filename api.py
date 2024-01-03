@@ -13,7 +13,7 @@ app.config["SECRET_KEY"] = "29900eb78c15dad2e9d691e4041160d1"
 mysql = MySQL(app)
 
 users = {'admin': 'admin12345'}
-
+#try
 def data_fetch(query):
     cur = mysql.connection.cursor()
     cur.execute(query)
