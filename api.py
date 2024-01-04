@@ -93,14 +93,15 @@ def add_church():
         inserted_ids = []
 
         for info in info_list:
+            id = info.get("id")
             conference_id = info.get("conference_id")
             details = info.get("details")
 
             cur.execute(
                 """
                 INSERT INTO church 
-                (conference_id, details) 
-                VALUES (%s, %s)
+                (id, conference_id, details) 
+                VALUES (%s, %s, %s)
                 """,
                 (conference_id, details),
             )
