@@ -11,15 +11,15 @@ class MyAppTests(unittest.TestCase):
 
         warnings.simplefilter("ignore", category=DeprecationWarning)
 
-    def test_getactors(self):
+    def test_get_church(self):
         response = self.app.get("/church")
         self.assertEqual(response.status_code, 200)
-        self.assertTrue("PENELOPE" in response.data.decode())
+        self.assertTrue("test post" in response.data.decode())
 
     def test_getactors_by_id(self):
-        response = self.app.get("/actors/88")
+        response = self.app.get("/church/1")
         self.assertEqual(response.status_code, 200)
-        self.assertTrue("PESCI" in response.data.decode())
+        self.assertTrue("test edit" in response.data.decode())
 
 
 if __name__ == "__main__":
