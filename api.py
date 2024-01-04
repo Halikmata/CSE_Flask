@@ -87,7 +87,7 @@ def add_church():
 
         # checks that info_list is a list
         if not isinstance(info_list, list):
-            # takes the input and converts it into a list if it's not already
+            # takes the input and converts it into a list if it's not already one
             info_list = [info_list]
 
         inserted_ids = []
