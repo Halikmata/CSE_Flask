@@ -44,9 +44,9 @@ class MyAppTests(unittest.TestCase):
         id = 25 
         data = {
             "conference_id": 4,
-            "details": "this is edited",
+            "details": "this is edited again",
         }
-        response = self.app.put(f'/church/{id}', json=data)
+        response = self.app.put('/church/{}'.format(id), json=data)
         self.assertEqual(response.status_code, 200)
         
     def test_delete_church(self):
