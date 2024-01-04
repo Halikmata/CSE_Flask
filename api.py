@@ -84,12 +84,13 @@ def add_church():
     cur = mysql.connection.cursor()
     try:
         info_list = request.get_json()
-        
-        # Ensure that info_list is a list
-        if not isinstance(info_list, list):
-            raise ValueError("Invalid input format. Expected a list of dictionaries.")
 
-        rows_affected = 0
+        # checks that info_list is a list
+        if not isinstance(info_list, list):
+            # takes the input and converts it into a list if it's not already
+            info_list = [info_list]
+
+        inserted_ids = []
 
         for info in info_list:
             conference_id = info.get("conference_id")
@@ -104,13 +105,12 @@ def add_church():
                 (conference_id, details),
             )
 
-            rows_affected += cur.rowcount
-
-        mysql.connection.commit()
+            mysql.connection.commit()
+            inserted_ids.append(cur.lastrowid)
 
         return make_response(
             jsonify(
-                {"message": "churches added successfully", "rows_affected": rows_affected}
+                {"message": "church/es added successfully", "inserted_ids": inserted_ids}
             ),
             201,
         )
@@ -120,8 +120,6 @@ def add_church():
 
     finally:
         cur.close()
-
-
 
 @app.route("/church/<int:id>", methods=["PUT"])
 def update_church(id):
