@@ -82,29 +82,45 @@ def get_church_by_id(id):
 @app.route("/church", methods=["POST"])
 def add_church():
     cur = mysql.connection.cursor()
-    info = request.get_json()
-    conference_id = info["conference_id"]
-    details = info["details"]
+    try:
+        info_list = request.get_json()
+        
+        # Ensure that info_list is a list
+        if not isinstance(info_list, list):
+            raise ValueError("Invalid input format. Expected a list of dictionaries.")
 
-    cur.execute(
-        """
-        INSERT INTO church 
-        (conference_id, details) 
-        VALUES (%s, %s)
-        """,
-        (conference_id, details),
-    )
-    mysql.connection.commit()
-    print("row(s) affected: {}".format(cur.rowcount))
-    rows_affected = cur.rowcount
-    cur.close()
+        rows_affected = 0
 
-    return make_response(
-        jsonify(
-            {"message": "church added successfully", "rows_affected": rows_affected}
-        ),
-        201,
-    )
+        for info in info_list:
+            conference_id = info.get("conference_id")
+            details = info.get("details")
+
+            cur.execute(
+                """
+                INSERT INTO church 
+                (conference_id, details) 
+                VALUES (%s, %s)
+                """,
+                (conference_id, details),
+            )
+
+            rows_affected += cur.rowcount
+
+        mysql.connection.commit()
+
+        return make_response(
+            jsonify(
+                {"message": "churches added successfully", "rows_affected": rows_affected}
+            ),
+            201,
+        )
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        cur.close()
+
 
 
 @app.route("/church/<int:id>", methods=["PUT"])
