@@ -28,6 +28,7 @@ class MyAppTests(unittest.TestCase):
                 },{
                     "conference_id": 20,
                     "details": "This is to be deleted.",
+                    "id": 100
                 }]
         response = self.app.post('/church', json=data)
         self.assertEqual(response.status_code, 201)
@@ -41,16 +42,16 @@ class MyAppTests(unittest.TestCase):
     #     self.assertEqual(response.status_code, 201)
     
     def test_update_church(self):
-        id = 25 
+        id = 103 
         data = {
-            "conference_id": 4,
-            "details": "this is edited again",
+            "conference_id": 1,
+            "details": "this is edited",
         }
         response = self.app.put('/church/{}'.format(id), json=data)
         self.assertEqual(response.status_code, 200)
         
     def test_delete_church(self):
-        id = 28 
+        id = 100 
         response = self.app.delete('/church/{}'.format(id))
         self.assertEqual(response.status_code, 200)
 
